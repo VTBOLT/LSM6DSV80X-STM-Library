@@ -114,19 +114,31 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t adrRead = 0b11010111;
-  uint16_t adrWrite = 0b11010110;
-  uint8_t regTest = 0x12;
+
+  //// All relevant addresses and pointers
+  // read/write
+  uint16_t adrRead = 0b11010101;
+  uint16_t adrWrite = 0b11010100;
+  // read/write registers addresses
   uint16_t regGyro[] = {0x22, 0x23, 0x24, 0x25, 0x26, 0x27};
   uint16_t regAccel[] = {0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D};
   uint16_t regEnable[] = {0x10, 0x11, 0x15, 0x16, 0x17, 0x02, 0x12};
-  uint8_t readreg;
+  // pointers
   uint8_t regGyroX1, regGyroX2, regGyroY1, regGyroY2, regGyroZ1, regGyroZ2;
   uint8_t regAccelX1, regAccelX2, regAccelY1, regAccelY2, regAccelZ1, regAccelZ2;
+
+  // test reg and pointer
+  uint8_t regTest = 0x12;
+  uint8_t readreg;
+
+  // Scaling values for the accelerometer and gyroscope
+  float accel_g = 0.061 / 1000.0;
+  float gyro_dps = 8.75 / 1000.0;
 
   //Register values
   uint8_t value0 = 0b00000000;
   uint8_t value1 = 0b00000001;
+  uint8_t value2 = 0b00000010;
   uint8_t value3 = 0b00000011;
   uint8_t value4 = 0b00000100;
   uint8_t value7 = 0b00000111;
@@ -138,12 +150,12 @@ int main(void)
   HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[0], 1, &value7, 1, 500);
   HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[1], 1, &value7, 1, 500);
   HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[2], 1, &value9, 1, 500);
-  HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[5], 1, &value3, 1, 500);
+  //HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[5], 1, &value3, 1, 500);
   HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[6], 1, &value4, 1, 500);
 
   //  //Enable filters
-  //HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[4], 1, &value1, 1, 500);
-  //HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[5], 1, &value0, 1, 500);
+  HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[3], 1, &value1, 1, 500);
+  HAL_I2C_Mem_Write(&hi2c1, adrWrite, regEnable[4], 1, &value0, 1, 500);
 
 
   while (1)
@@ -153,47 +165,61 @@ int main(void)
     // Read gyroscope X values then combine
 	  HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[0], 1, &regGyroX1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[1], 1, &regGyroX2, 1, 1000); 
-    int16_t gyroX = (int16_t)(regGyroX1 << 8) | regGyroX2;
+    int16_t gyroX = (int16_t)(regGyroX2 << 8) | regGyroX1;
 
     // Read gyroscope Y values then combine
 	  HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[2], 1, &regGyroY1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[3], 1, &regGyroY2, 1, 1000);
-    int16_t gyroY = (int16_t)(regGyroY1 << 8) | regGyroY2;
+    int16_t gyroY = (int16_t)(regGyroY2 << 8) | regGyroY1;
 
     // Read gyroscope Y values then combine
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[4], 1, &regGyroZ1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regGyro[5], 1, &regGyroZ2, 1, 1000);
-    int16_t gyroZ = (int16_t)(regGyroZ1 << 8) | regGyroZ2;
+    int16_t gyroZ = (int16_t)(regGyroZ2 << 8) | regGyroZ1;
+
+    // Make all gyro values readable
+    gyroX=gyroX*gyro_dps;
+    gyroY=gyroY*gyro_dps;
+    gyroZ=gyroZ*gyro_dps;
 
     // Print all gyro values
-    printf("the gyro X value is %x\n\r", gyroX);
-    printf("the gyro Y value is %x\n\r", gyroY);
-    printf("the gyro Z value is %x\n\n\r", gyroZ);
+    printf("the gyro X value is %i\n\r", gyroX);
+    printf("the gyro Y value is %i\n\r", gyroY);
+    printf("the gyro Z value is %i\n\n\r", gyroZ);
 
     //// ACCELEROMETER VALUES
     // Read accelerometers X values then combine
 	  HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[0], 1, &regAccelX1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[1], 1, &regAccelX2, 1, 1000); 
-    int16_t accelX = (int16_t)(regAccelX1 << 8) | regAccelX2;
+    int16_t accelX = (int16_t)(regAccelX2 << 8) | regAccelX1;
 
     // Read accelerometers Y values then combine
 	  HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[2], 1, &regAccelY1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[3], 1, &regAccelY2, 1, 1000);
-    int16_t accelY = (int16_t)(regAccelY1 << 8) | regAccelY2;
+    int16_t accelY = (int16_t)(regAccelY2 << 8) | regAccelY1;
 
     // Read accelerometers Y values then combine
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[4], 1, &regAccelZ1, 1, 1000);
     HAL_I2C_Mem_Read(&hi2c1, adrRead, regAccel[5], 1, &regAccelZ2, 1, 1000);
-    int16_t accelZ = (int16_t)(regAccelZ1 << 8) | regAccelZ2;
+    int16_t accelZ = (int16_t)(regAccelZ2 << 8) | regAccelZ1;
+
+    // Make all accel values readable
+    accelX=accelX*accel_g;
+    accelY=accelY*accel_g;
+    accelZ=accelZ*accel_g;
+    
 
     // Print all accel values
-    printf("the accel X value is %x\n\r", accelX);
-    printf("the accel Y value is %x\n\r", accelY);
-    printf("the accel Z value is %x\n\n\n\r", accelZ);
+    printf("the accel X value is %i\n\r", accelX);
+    printf("the accel Y value is %i\n\r", accelY);
+    printf("the accel Z value is %i\n\n\n\r", accelZ);
 
-	  HAL_I2C_Mem_Read(&hi2c1, adrRead, regTest, 1, &readreg, 1, 1000);
-	  printf("The value is %x\n\n\n\r", readreg);
-	  readreg = 0;
+
+
+    // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+	  // HAL_I2C_Mem_Read(&hi2c1, adrRead, regTest, 1, &readreg, 1, 1000);
+	  // printf("The value is %x\n\n\n\r", readreg);
+	  // readreg = 0;
 
 	  HAL_Delay(2000);
 

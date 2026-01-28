@@ -14,8 +14,8 @@ I didb't think we'd get this far tbh
 - ~Data size error~
 - ~Now, gyroscope and accelerometer not enabling~
 - ~Combine recieved data into 16 bits~ 
-- Process hex data into standard decimal
-- Test if data is correct
+- ~Process hex data into standard decimal~
+- ~Test if data is correct~ Gyro seems to be, accel may not be
 - Long term: machine learning rules etc
 
 ### VALUES ARE COMING THROUGH!!!!
