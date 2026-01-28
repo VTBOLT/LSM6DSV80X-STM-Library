@@ -204,9 +204,9 @@ int main(void)
     int16_t accelZ = (int16_t)(regAccelZ2 << 8) | regAccelZ1;
 
     // Make all accel values readable
-    accelX=accelX*accel_g;
-    accelY=accelY*accel_g;
-    accelZ=accelZ*accel_g;
+    // accelX=accelX*accel_g;
+    // accelY=accelY*accel_g;
+    // accelZ=accelZ*accel_g;
     
 
     // Print all accel values
