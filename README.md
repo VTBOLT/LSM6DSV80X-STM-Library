@@ -8,7 +8,7 @@ Please remember to pull before pushing changes
 
 ### UPDATE THE TODO WHEN YOU MAKE CHANGES
 
-I didb't think we'd get this far tbh
+I didn't think we'd get this far tbh
 
 ## TODO:
 - ~Data size error~
