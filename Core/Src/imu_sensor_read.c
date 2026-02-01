@@ -12,6 +12,8 @@ uint8_t regAccelX1, regAccelX2, regAccelY1, regAccelY2, regAccelZ1, regAccelZ2;
 uint8_t regTemp1, regTemp2;
 
 void imuSetConfigRegs(I2C_HandleTypeDef *hi2c1) {
+   uint8_t global_reset = GLOBAL_RESET;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, GLOBAL_REG, 1, &global_reset, 1, 200);
     uint8_t writePointer = CONF_RESET;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL_RESET_REG, 1, &writePointer, 1, 200);
     writePointer = GRYO_240HZ;
@@ -25,11 +27,22 @@ void imuSetConfigRegs(I2C_HandleTypeDef *hi2c1) {
     writePointer = ACCEL_ENABLE_FILTER;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ACCEL_FILTER_REG, 1, &writePointer, 1, 200);
 
-    // enable interrupts
-    writePointer = INT1_ENABLE;
-    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, INT1_ENABLE_REG, 1, &writePointer, 1, 200);
-    writePointer = INT2_ENABLE;
+    // enable freefall test
+    writePointer = WAKEUP_DUR;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, WAKEUP_DUR_REG, 1, &writePointer, 1, 200);
+    writePointer = FREEFALL_DUR;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, FF_REG, 1, &writePointer, 1, 200);
+    writePointer = ROUTEINT1_TO_FF;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, MD1_CFG_REG, 1, &writePointer, 1, 200);
+    writePointer = TURNSITONDUMBASS;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, FUNCTIONS_ENABLE, 1, &writePointer, 1, 200);
+    writePointer = INT2_ENABLE_REG;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, INT2_ENABLE_REG, 1, &writePointer, 1, 200);
+    // ctrl4 idek man
+    writePointer = CTRL4_MAYBEFIX;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL4_REG, 1, &writePointer, 1, 200);
+
+
 }
 
 float readGyroX(I2C_HandleTypeDef *hi2c1) {

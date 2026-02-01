@@ -116,9 +116,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  uint8_t writePointer = CONF_RESET;
-  HAL_I2C_Mem_Write(&hi2c1, ADDR_WRITE, CTRL_RESET_REG, 1, &writePointer, 1, 500);
-  imuSetConfigRegs(&hi2c1);
+ 
 
   while (1)
   {
@@ -134,13 +132,28 @@ int main(void)
 
     // Print temp value
     printf("the temp value is %f\n\n\n\r", readTempIMU(&hi2c1));
+    uint16_t regTest = 0x1D;
+    uint8_t readreg;
+    uint16_t regTest2 = 0x45;
+    uint8_t readreg2;
+    uint16_t regTest3 = 0x03;
+    uint8_t readreg3;
+   
+     // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+	  HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest, 1, &readreg, 1, 1000);
+	  printf("The value is %x\n\n\n\r", readreg);
+	  readreg = 0;
 
-    // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
-	  // HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest, 1, &readreg, 1, 1000);
-	  // printf("The value is %x\n\n\n\r", readreg);
-	  // readreg = 0;
+     // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+	  HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest2, 1, &readreg2, 1, 1000);
+	  printf("The value is %x\n\n\n\r", readreg2);
+	  readreg2 = 0;
 
-	  HAL_Delay(500);
+    HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest3, 1, &readreg3, 1, 1000);
+	  printf("The value is %x\n\n\n\r", readreg3);
+	  readreg3 = 0;
+
+	  HAL_Delay(250);
 
     /* USER CODE END WHILE */
 
