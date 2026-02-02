@@ -64,10 +64,10 @@
 // addressses for freefall test1
 #define WAKEUP_DUR 0b10000000
 #define FREEFALL_DUR 0b00001000
-#define ROUTEINT1_TO_FF 0b00010000
+#define ROUTEINT1_TO_6D 0b00000100
 #define INT1_CTRL_GYROACCEL 0b00000011
-#define TURNSITONDUMBASS 0b10000000
-#define CTRL4_MAYBEFIX 0x11
+#define INT_ENABLE 0b10000000
+#define ORIENT_CHECK 0b01111111
 
 // registry values for freefall test1
 #define WAKEUP_DUR_REG 0x5C
@@ -75,7 +75,7 @@
 #define MD1_CFG_REG 0x5E
 #define INT1_CTRL_REG 0x0D
 #define FUNCTIONS_ENABLE 0x50
-#define CTRL4_REG 0x13
+#define ORIENTATION_REG 0x47
 
 //// IMU sensor headers
 

@@ -32,15 +32,15 @@ void imuSetConfigRegs(I2C_HandleTypeDef *hi2c1) {
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, WAKEUP_DUR_REG, 1, &writePointer, 1, 200);
     writePointer = FREEFALL_DUR;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, FF_REG, 1, &writePointer, 1, 200);
-    writePointer = ROUTEINT1_TO_FF;
+    writePointer = ROUTEINT1_TO_6D;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, MD1_CFG_REG, 1, &writePointer, 1, 200);
-    writePointer = TURNSITONDUMBASS;
+    writePointer = INT_ENABLE;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, FUNCTIONS_ENABLE, 1, &writePointer, 1, 200);
     writePointer = INT2_ENABLE_REG;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, INT2_ENABLE_REG, 1, &writePointer, 1, 200);
-    // ctrl4 idek man
-    writePointer = CTRL4_MAYBEFIX;
-    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL4_REG, 1, &writePointer, 1, 200);
+    // orient check
+    writePointer = ORIENT_CHECK;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ORIENTATION_REG, 1, &writePointer, 1, 200);
 
 
 }
