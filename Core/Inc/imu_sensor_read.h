@@ -5,7 +5,7 @@
 
 #include "main.h"
 
-//// All constant declarations
+//// Sensor configuration
 // conversion constants 
 #define TEMP_C 0.00390625
 #define ACCEL_G 0.061
@@ -33,6 +33,14 @@
 #define ACCEL_240HZ 0b00000111
 #define ACCEL_ENABLE_FILTER 0b00000000
 
+// registries to enable interrupts
+#define INT1_ENABLE_REG 0x0D
+#define INT2_ENABLE_REG 0x0E
+
+// values for enable interrupts
+#define INT1_ENABLE 0b01111011
+#define INT2_ENABLE 0b11111011
+
 // addresses for gryo values
 #define ADDR_GRYO_X1 0x22
 #define ADDR_GRYO_X2 0x23
@@ -53,29 +61,36 @@
 #define ADDR_TEMP1 0x20
 #define ADDR_TEMP2 0x21
 
+//// Interrupt configuration
 // registries to enable interrupts
-#define INT2_ENABLE_REG 0x0E
-#define IF_CFG_REG 0x03
+#define FUNCTIONS_ENABLE 0x50
+#define INT2_CTRL_REG 0x0E
+#define INT1_CTRL_REG 0x0D
 
-// values for enable interrupts
-#define INT2_ENABLE 0b00000000
-#define IF_CFG_HLACTIVE 0b00000000
-
-// addressses for freefall test1
-#define WAKEUP_DUR 0b10000000
-#define FREEFALL_DUR 0b00001000
-#define ROUTEINT1_TO_6D 0b00000100
-#define INT1_CTRL_GYROACCEL 0b00000011
+// values to enable interrupts
 #define INT_ENABLE 0b10000000
-#define ORIENT_CHECK 0b01111111
+#define INT1_CTRL_GYROACCEL 0b00000011
+#define INT2_GYROACCEL 0b00000000
 
-// registry values for freefall test1
+// registries to enable free-fall detection on int1 
 #define WAKEUP_DUR_REG 0x5C
 #define FF_REG 0x5D
 #define MD1_CFG_REG 0x5E
-#define INT1_CTRL_REG 0x0D
-#define FUNCTIONS_ENABLE 0x50
+
+// values to enable free-fall detection on int1 
+#define WAKEUP_DUR 0b10000000
+#define FREEFALL_DUR 0b00001000
+#define ROUTE_INT1 0b00010000
+
+// registries to enable orientation detection on int2 
 #define ORIENTATION_REG 0x47
+#define MD2_CFG_REG 0x5F
+
+// values to enable orientation detection on int2
+#define ORIENT_CHECK 0b01111111
+#define ROUTE_INT2 0b00000100
+
+
 
 //// IMU sensor headers
 
@@ -95,4 +110,4 @@ float readAccelZ(I2C_HandleTypeDef *hi2c1);
 // function to read the imu temp sensor
 float readTempIMU(I2C_HandleTypeDef *hi2c1);
 
-#endif  
+#endif

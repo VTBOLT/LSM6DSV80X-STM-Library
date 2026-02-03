@@ -116,7 +116,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
- 
+  imuSetConfigRegs(&hi2c1);
 
   while (1)
   {
@@ -136,7 +136,7 @@ int main(void)
     uint8_t readreg;
     uint16_t regTest2 = 0x45;
     uint8_t readreg2;
-    uint16_t regTest3 = 0x03;
+    uint16_t regTest3 = 0x47;
     uint8_t readreg3;
    
      // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
