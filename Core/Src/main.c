@@ -120,6 +120,10 @@ int main(void)
 
   while (1)
   {
+
+    (freefallDetection(&hi2c1)) ? printf("you are in freefall \n\r") : printf("you are not falling \n\r");
+
+
     // Print all gyro values
     printf("the gyro X value is %f\n\r", readGyroX(&hi2c1));
     printf("the gyro Y value is %f\n\r", readGyroY(&hi2c1));
@@ -128,30 +132,35 @@ int main(void)
     // Print all accel values
     printf("the accel X value is %f\n\r", readAccelX(&hi2c1));
     printf("the accel Y value is %f\n\r", readAccelY(&hi2c1));
-    printf("the accel Z value is %f\n\n\r", readAccelZ(&hi2c1));  
+    printf("the accel Z value is %f\n\n\n\r", readAccelZ(&hi2c1));  
 
     // Print temp value
     printf("the temp value is %f\n\n\n\r", readTempIMU(&hi2c1));
-    uint16_t regTest = 0x1D;
-    uint8_t readreg;
-    uint16_t regTest2 = 0x45;
-    uint8_t readreg2;
-    uint16_t regTest3 = 0x47;
-    uint8_t readreg3;
+
+    // printf("the HG accel X value is %f\n\r", readHGAccelX(&hi2c1));
+    // printf("the HG accel Y value is %f\n\r", readHGAccelY(&hi2c1));
+    // printf("the HG accel Z value is %f\n\n\n\r", readHGAccelZ(&hi2c1)); 
+
+    // uint16_t regTest = 0x1D;
+    // uint8_t readreg;
+    // uint16_t regTest2 = 0x45;
+    // uint8_t readreg2;
+    // uint16_t regTest3 = 0x47;
+    // uint8_t readreg3;
    
-     // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
-	  HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest, 1, &readreg, 1, 1000);
-	  printf("The value is %x\n\n\n\r", readreg);
-	  readreg = 0;
+    //  // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+	  // HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest, 1, &readreg, 1, 1000);
+	  // printf("The value is %x\n\n\n\r", readreg);
+	  // readreg = 0;
 
-     // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
-	  HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest2, 1, &readreg2, 1, 1000);
-	  printf("The value is %x\n\n\n\r", readreg2);
-	  readreg2 = 0;
+    //  // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+	  // HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest2, 1, &readreg2, 1, 1000);
+	  // printf("The value is %x\n\n\n\r", readreg2);
+	  // readreg2 = 0;
 
-    HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest3, 1, &readreg3, 1, 1000);
-	  printf("The value is %x\n\n\n\r", readreg3);
-	  readreg3 = 0;
+    // HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest3, 1, &readreg3, 1, 1000);
+	  // printf("The value is %x\n\n\n\r", readreg3);
+	  // readreg3 = 0;
 
 	  HAL_Delay(250);
 
