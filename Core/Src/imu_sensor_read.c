@@ -7,13 +7,14 @@
 # endif
 #include "imu_sensor_read.h"
 #include <stdbool.h>
+#include "string.h"
 
 void imuSetConfigRegs(I2C_HandleTypeDef *hi2c1) {
     //// reset device registries. Conf-reset should not be disbaled
     // uint8_t global_reset = GLOBAL_RESET;
     // HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, GLOBAL_REG, 1, &global_reset, 1, 200);
     uint8_t writePointer = CONF_RESET;
-    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL_RESET_REG, 1, &writePointer, 1, 200);
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL_CONF_REG, 1, &writePointer, 1, 200);
 
     // enable gyroscope, accelerometer, and temperature sensors
     writePointer = GRYO_240HZ;
@@ -26,10 +27,14 @@ void imuSetConfigRegs(I2C_HandleTypeDef *hi2c1) {
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ACCEL_CTRL_REG, 1, &writePointer, 1, 200);
     writePointer = ACCEL_16_FS;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ACCEL_FS_REG, 1, &writePointer, 1, 200);
-    writePointer = ACCEL_ENABLE_FILTER;
-    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ACCEL_FILTER_REG, 1, &writePointer, 1, 200);
+    writePointer = HG_ACCEL_OFFSET;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, HG_ACCEL_OFFSET_REG, 1, &writePointer, 1, 200);
+    //writePointer = ACCEL_ENABLE_FILTER;
+    //HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, ACCEL_FILTER_REG, 1, &writePointer, 1, 200);
     writePointer = HG_ACCEL_19kHZ_32;
     HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, HG_ACCEL_CTRL_REG, 1, &writePointer, 1, 200);
+    writePointer = I2C_BDU_INC;
+    HAL_I2C_Mem_Write(hi2c1, ADDR_WRITE, CTRL_CONF_REG, 1, &writePointer, 1, 200);
 
     // enable global interrupts and set allow each to access gryo and accel data. Also enables hg shock 
     writePointer = INT_ENABLE;
@@ -63,12 +68,14 @@ float readGyroX(I2C_HandleTypeDef *hi2c1) {
     uint8_t regGyroX1, regGyroX2;
 
     // Read gyroscope X values then combine
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_X1, 1, &regGyroX1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_X2, 1, &regGyroX2, 1, 50); 
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_X1, 1, &regGyroX1, 1, 50);
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_X2, 1, &regGyroX2, 1, 50); 
     int16_t gyroXraw = (int16_t)(regGyroX2 << 8) | regGyroX1;
 
     // convert to dps
     float gyroX=gyroXraw*GYRO_DPS;
+    // convert to rad/s
+    gyroX=gyroX*GYRO_RADS;
 
     return gyroX;
 }
@@ -77,12 +84,14 @@ float readGyroY(I2C_HandleTypeDef *hi2c1) {
     uint8_t regGyroY1, regGyroY2;
 
     // Read gyroscope Y values then combine
-	HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_Y1, 1, &regGyroY1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_Y2, 1, &regGyroY2, 1, 50);
+	HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_Y1, 1, &regGyroY1, 1, 50);
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_Y2, 1, &regGyroY2, 1, 50);
     int16_t gyroYraw = (int16_t)(regGyroY2 << 8) | regGyroY1;
 
     // convert to dps
     float gyroY=gyroYraw*GYRO_DPS;
+    // convert to rad/s
+    gyroY=gyroY*GYRO_RADS;
 
     return gyroY;
 }
@@ -91,12 +100,14 @@ float readGyroZ(I2C_HandleTypeDef *hi2c1) {
     uint8_t regGyroZ1, regGyroZ2;
 
     // Read gyroscope Z values then combine
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_Z1, 1, &regGyroZ1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GRYO_Z2, 1, &regGyroZ2, 1, 50);
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_Z1, 1, &regGyroZ1, 1, 50);
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_GYRO_Z2, 1, &regGyroZ2, 1, 50);
     int16_t gyroZraw = (int16_t)(regGyroZ2 << 8) | regGyroZ1;
 
     // convert to dps 
     float gyroZ=gyroZraw*GYRO_DPS;
+    // convert to rad/s
+    gyroZ=gyroZ*GYRO_RADS;
 
     return gyroZ;
 }
@@ -111,6 +122,9 @@ float readAccelX(I2C_HandleTypeDef *hi2c1) {
 
     // convert to mgs
     float accelX=accelXraw*ACCEL_G;
+    // convert to m/s^2
+    accelX=accelX*ACCEL_MS2;
+    
 
     return accelX;
 }
@@ -125,6 +139,8 @@ float readAccelY(I2C_HandleTypeDef *hi2c1) {
 
     // convert to mgs
     float accelY=accelYraw*ACCEL_G;
+    // convert to m/s^2
+    accelY=accelY*ACCEL_MS2;
 
     return accelY;
 }
@@ -139,6 +155,8 @@ float readAccelZ(I2C_HandleTypeDef *hi2c1) {
 
     // convert to mgs
     float accelZ=accelZraw*ACCEL_G;
+    // convert to m/s^2
+    accelZ=accelZ*ACCEL_MS2;
 
     return accelZ;
 }
@@ -148,7 +166,7 @@ float readHGAccelX(I2C_HandleTypeDef *hi2c1) {
 
     // Read accelerometers X values then combine
     HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_X1, 1, &regHGAccelX1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_X1, 1, &regHGAccelX2, 1, 50); 
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_X2, 1, &regHGAccelX2, 1, 50); 
     int16_t accelHGXraw = (int16_t)(regHGAccelX2 << 8) | regHGAccelX1;
 
     // convert to mgs
@@ -162,7 +180,7 @@ float readHGAccelY(I2C_HandleTypeDef *hi2c1) {
 
     // Read accelerometers X values then combine
     HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Y1, 1, &regHGAccelY1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Y1, 1, &regHGAccelY2, 1, 50); 
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Y2, 1, &regHGAccelY2, 1, 50); 
     int16_t accelHGYraw = (int16_t)(regHGAccelY2 << 8) | regHGAccelY1;
 
     // convert to mgs
@@ -176,7 +194,7 @@ float readHGAccelZ(I2C_HandleTypeDef *hi2c1) {
 
     // Read accelerometers X values then combine
     HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Z1, 1, &regHGAccelZ1, 1, 50);
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Z1, 1, &regHGAccelZ2, 1, 50); 
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ADDR_HG_ACCEL_Z2, 1, &regHGAccelZ2, 1, 50); 
     int16_t accelHGZraw = (int16_t)(regHGAccelZ2 << 8) | regHGAccelZ1;
 
     // convert to mgs
@@ -202,7 +220,7 @@ float readTempIMU(I2C_HandleTypeDef *hi2c1) {
 bool hgShockDetect(I2C_HandleTypeDef *hi2c1) {
     uint8_t regInt;
     HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ALL_INT_SRC, 1, &regInt, 1, 50);
-    return(regInt && 0b0001000) != 0;
+    return(regInt & 0b0001000) != 0;
 }
 
 bool freefallDetection(I2C_HandleTypeDef *hi2c1){
@@ -213,40 +231,30 @@ bool freefallDetection(I2C_HandleTypeDef *hi2c1){
 
 bool sixDChangeDetection(I2C_HandleTypeDef *hi2c1){
     uint8_t reg6D;
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, ALL_INT_SRC, 1, &reg6D, 1, 50);
-    return (reg6D & 0b00010000) != 0;
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, D6D_SRC, 1, &reg6D, 1, 50);
+    return (reg6D & 0b01000000) != 0;
 }
     
-char IszHorL(I2C_HandleTypeDef *hi2c1){
-    uint8_t regZD;
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, D6D_SRC, 1, &regZD, 1, 50);
-    if(regZD & 0b00100000){
-        return 'H';
+int checkOrintation(I2C_HandleTypeDef *hi2c1){
+    uint8_t orient;
+    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, D6D_SRC, 1, &orient, 1, 50);
+    if (orient & 0b00100000) {
+        return 6;
     }
-    if(regZD & 0b00010000){
-        return 'L';
+    if (orient & 0b00010000) {
+        return 5;
     }
-    return '?';
-}
-char IsxHorL(I2C_HandleTypeDef *hi2c1){
-    uint8_t regXD;
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, D6D_SRC, 1, &regXD, 1, 50);
-     if(regXD & 0b00100000){
-        return 'H';
+    if (orient & 0b00001000) {
+        return 4;
     }
-    if(regXD & 0b00010000){
-        return 'L';
+    if (orient & 0b00000100) {
+        return 3;
     }
-    return '?';
-}
-char IsyHorL(I2C_HandleTypeDef *hi2c1){
-    uint8_t regYD;
-    HAL_I2C_Mem_Read(hi2c1, ADDR_READ, D6D_SRC, 1, &regYD, 1, 50);
-     if(regYD & 0b00100000){
-        return 'H';
+    if (orient & 0b00000010) {
+        return 2;
     }
-    if(regYD & 0b00010000){
-        return 'L';
+    if (orient & 0b00000001) {
+        return 1;
     }
-    return '?';
+    return 0;
 }

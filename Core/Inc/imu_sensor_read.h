@@ -13,7 +13,7 @@
 #define ACCEL_MS2 9.80665
 #define GYRO_DPS 0.035
 #define GYRO_RADS 0.0174533
-#define HG_ACCEL_G 0.000976
+#define HG_ACCEL_G 0.976
 
 // device registries
 #define ADDR_READ 0b11010101
@@ -21,33 +21,36 @@
 
 // registries for enable writing
 #define GLOBAL_REG 0x01
-#define CTRL_RESET_REG 0x12
+#define CTRL_CONF_REG 0x12
 #define GYRO_CTRL_REG 0x11
 #define GYRO_DPS_REG 0x15
 #define GYRO_FILTER_REG 0x16
 #define ACCEL_CTRL_REG 0x10
-#define ACCEL_FS_REG 0x08
-#define ACCEL_FILTER_REG 0x17
+#define ACCEL_FS_REG 0x17
+#define HG_ACCEL_OFFSET_REG 0x18
+//#define ACCEL_FILTER_REG 0x16
 #define HG_ACCEL_CTRL_REG 0x4E
 
 // values for enable writing
 #define GLOBAL_RESET 0b00000100
 #define CONF_RESET 0b00000001
 #define GRYO_240HZ 0b00000111
-#define GYRO_250DPS 0b00001011
+#define GYRO_250DPS 0b00111011
 #define GYRO_ENABLE_FILTER 0b00000001
 #define ACCEL_240HZ 0b00000111
 #define ACCEL_16_FS 0b00000011
-#define ACCEL_ENABLE_FILTER 0b00000000
-#define HG_ACCEL_19kHZ_32 0b10101000
+#define HG_ACCEL_OFFSET 0b00000011
+//#define ACCEL_ENABLE_FILTER 0b00000000
+#define HG_ACCEL_19kHZ_32 0b11011000
+#define I2C_BDU_INC 0b01000100
 
 // addresses for gryo values
-#define ADDR_GRYO_X1 0x22
-#define ADDR_GRYO_X2 0x23
-#define ADDR_GRYO_Y1 0x24
-#define ADDR_GRYO_Y2 0x25
-#define ADDR_GRYO_Z1 0x26
-#define ADDR_GRYO_Z2 0x27
+#define ADDR_GYRO_X1 0x22
+#define ADDR_GYRO_X2 0x23
+#define ADDR_GYRO_Y1 0x24
+#define ADDR_GYRO_Y2 0x25
+#define ADDR_GYRO_Z1 0x26
+#define ADDR_GYRO_Z2 0x27
 
 // addresses for gryo values
 #define ADDR_ACCEL_X1 0x28
@@ -126,6 +129,8 @@ float readHGAccelZ(I2C_HandleTypeDef *hi2c1);
 // function to read the imu temp sensor
 float readTempIMU(I2C_HandleTypeDef *hi2c1);
 
+bool hgShockDetect(I2C_HandleTypeDef *hi2c1);
+
 //function that tells you whether you are in freefall
 bool freefallDetection(I2C_HandleTypeDef *hi2c1);
 
@@ -134,8 +139,6 @@ bool sixDChangeDetection(I2C_HandleTypeDef *hi2c1);
 
 //functions that read high or low for each axis (x,y,z) depending on orientation
 //returns H for high, L for low
-char IszHorL(I2C_HandleTypeDef *hi2c1);
-char IsyHorL(I2C_HandleTypeDef *hi2c1);
-char IsxHorL(I2C_HandleTypeDef *hi2c1);
+int checkOrintation(I2C_HandleTypeDef *hi2c1);
 
 #endif

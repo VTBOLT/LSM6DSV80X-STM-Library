@@ -121,34 +121,38 @@ int main(void)
   while (1)
   {
 
-    (freefallDetection(&hi2c1)) ? printf("you are in freefall \n\r") : printf("you are not falling \n\r");
+    (freefallDetection(&hi2c1)) ? printf("you are in freefall :O \n\n\r") : printf("you are not falling :3 \n\n\r");
+    (hgShockDetect(&hi2c1)) ? printf("Hit the ground X( \n\n\r") : printf("Not colliding :) \n\n\r");
+    // (sixDChangeDetection(&hi2c1)) ? printf("direction changed :D \n\n\r") : printf("direction didnt change :( \n\n\r");
+    // printf("the orientation is %i\n\n\n\r", checkOrintation(&hi2c1));  
 
+    
 
-    // Print all gyro values
-    printf("the gyro X value is %f\n\r", readGyroX(&hi2c1));
-    printf("the gyro Y value is %f\n\r", readGyroY(&hi2c1));
-    printf("the gyro Z value is %f\n\n\r", readGyroZ(&hi2c1));
+    // // Print all gyro values
+    // printf("the gyro X value is %f\n\r", readGyroX(&hi2c1));
+    // printf("the gyro Y value is %f\n\r", readGyroY(&hi2c1));
+    // printf("the gyro Z value is %f\n\n\r", readGyroZ(&hi2c1));
 
-    // Print all accel values
+    // // Print all accel values
     printf("the accel X value is %f\n\r", readAccelX(&hi2c1));
     printf("the accel Y value is %f\n\r", readAccelY(&hi2c1));
     printf("the accel Z value is %f\n\n\n\r", readAccelZ(&hi2c1));  
 
-    // Print temp value
-    printf("the temp value is %f\n\n\n\r", readTempIMU(&hi2c1));
+    // // Print temp value
+    // printf("the temp value is %f\n\n\n\r", readTempIMU(&hi2c1));
 
-    // printf("the HG accel X value is %f\n\r", readHGAccelX(&hi2c1));
-    // printf("the HG accel Y value is %f\n\r", readHGAccelY(&hi2c1));
-    // printf("the HG accel Z value is %f\n\n\n\r", readHGAccelZ(&hi2c1)); 
+    printf("the HG accel X value is %f\n\r", readHGAccelX(&hi2c1));
+    printf("the HG accel Y value is %f\n\r", readHGAccelY(&hi2c1));
+    printf("the HG accel Z value is %f\n\n\n\r", readHGAccelZ(&hi2c1)); 
 
-    // uint16_t regTest = 0x1D;
+    // uint16_t regTest = 0x4E;
     // uint8_t readreg;
     // uint16_t regTest2 = 0x45;
     // uint8_t readreg2;
     // uint16_t regTest3 = 0x47;
     // uint8_t readreg3;
    
-    //  // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
+     // Test registry. Uncomment as needed. Nothing is enabled to accomodate. Currently viewing settings for ctrl1
 	  // HAL_I2C_Mem_Read(&hi2c1, ADDR_READ, regTest, 1, &readreg, 1, 1000);
 	  // printf("The value is %x\n\n\n\r", readreg);
 	  // readreg = 0;
