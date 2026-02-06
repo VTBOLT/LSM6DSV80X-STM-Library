@@ -1,7 +1,7 @@
 # LSM6DSV80X-STM-Library
 ### Unstable Branch
 
-This branch is the code considered either in testing, nonfunctional, or otherwise not ready for a full release. It will also be the semi-permanant home of the project until it is completed.
+This branch is the code considered either in testing, nonfunctional, or otherwise not ready for a full release. It will also be the semi-permanent home of the project until it is completed.
 
 Only upload new code to unstable until tested to be ready for main branch
 Please remember to pull before pushing changes
